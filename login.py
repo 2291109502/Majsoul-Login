@@ -15,7 +15,7 @@ for i in range(acccounts):
 
     #1.open browser
     options = webdriver.ChromeOptions()
-    "options.add_argument("--headless=new")"
+    options.add_argument("--headless=new")
     driver = webdriver.Chrome(options=options)
     driver.set_window_size(1000, 720)
     driver.get("https://game.maj-soul.net/1/")
