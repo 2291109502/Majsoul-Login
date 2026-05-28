@@ -20,10 +20,10 @@ for i in range(acccounts):
     driver.set_window_size(1000, 720)
     driver.get("https://game.maj-soul.net/1/")
     print(f'Account {i+1} loading game...')
-    sleep(20)
+    sleep(2000)
 
     #2.input email
-    screen = driver.find_element(By.ID, 'layaCanvas')
+    screen = driver.find_element(By.ID, 'unity-canvas')
     ActionChains(driver)\
         .move_to_element_with_offset(screen, 250, -100)\
         .click()\
