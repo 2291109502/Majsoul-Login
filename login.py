@@ -4,6 +4,8 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 acccounts = int(len(sys.argv[1:])/2)
@@ -13,40 +15,58 @@ for i in range(acccounts):
     passwd = sys.argv[1+i+acccounts]
     print('----------------------------')
 
-    #1.open browser
     options = webdriver.ChromeOptions()
     options.add_argument("--headless=new")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=1280,800")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+
     driver = webdriver.Chrome(options=options)
-    driver.set_window_size(1000, 720)
     driver.get("https://game.maj-soul.net/1/")
     print(f'Account {i+1} loading game...')
-    sleep(20)
 
-    #2.input email
-    screen = driver.find_element(By.ID, 'unity-canvas')
+    try:
+        screen = WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((By.TAG_NAME, "canvas"))
+        )
+    except:
+        driver.save_screenshot(f"error_canvas_{i+1}.png")
+        driver.quit()
+        raise
+
+    sleep(60)
+
     ActionChains(driver)\
-        .move_to_element_with_offset(screen, 250, -100)\
+        .move_to_element_with_offset(screen, 350, -135)\
         .click()\
         .perform()
-    driver.find_element(By.NAME, 'input').send_keys(email)
-    print('Input email successfully')
-
-    #3.input password
+    sleep(2)
     ActionChains(driver)\
-        .move_to_element_with_offset(screen, 250, -50)\
+        .send_keys(email)\
+        .perform()
+    sleep(3)
+
+    ActionChains(driver)\
+        .move_to_element_with_offset(screen, 350, -50)\
         .click()\
         .perform()
-    driver.find_element(By.NAME, 'input_password').send_keys(passwd)
-    print('Input password successfully')
-
-    #4.login
+    sleep(3)
     ActionChains(driver)\
-        .move_to_element_with_offset(screen, 250, 50)\
+        .send_keys(passwd)\
+        .perform()
+    sleep(3)
+
+    ActionChains(driver)\
+        .move_to_element_with_offset(screen, 350, 60)\
         .click()\
         .perform()
-    print('Entering game...')
-    sleep(20) #loading...
-    print('Login success')
+
+    sleep(60)
+    driver.save_screenshot(f"login_success_{i+1}.png")
+    print(f'Account {i+1} login completed')
 
     # 5.check mails
     print('Check mails')
